@@ -1762,14 +1762,13 @@ def get_action_delay(action):
     config = Settings.action_delays
 
     if (not config or
-            action not in config or
-            config["enabled"] is not True or
-            config[action] is None or
-            isinstance(config[action], (int, float))) is not True:
-        return defaults[action]
+		    config["enabled"] is not True or
+		    action not in config or
+		    isinstance(config[action], (int, float)) is not True):
+	    return defaults[action]
 
     else:
-        custom_delay = config[action]
+	    custom_delay = config[action]
 
     # randomize the custom delay in user-defined range
     if (config["randomize"] is True and
