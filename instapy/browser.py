@@ -54,6 +54,9 @@ def set_selenium_local_session(proxy_address,
 
         # set English language
         firefox_profile.set_preference('intl.accept_languages', 'en')
+        # override user_agent TODO: Provide possibility of changing user_agent in Instapy constructor, no hardcode
+        firefox_profile.set_preference("general.useragent.override", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:67.0) Gecko/20100101 Firefox/67.0")
+
 
         if disable_image_load:
             # permissions.default.image = 2: Disable images load,

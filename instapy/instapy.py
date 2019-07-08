@@ -141,7 +141,7 @@ class InstaPy:
         self.nogui = nogui
         if self.nogui:
             if not platform.startswith('win32'):
-                self.display = Display(visible=0, size=(800, 600))
+                self.display = Display(visible=0, size=(1920, 1080)) #Most common display size
                 self.display.start()
             else:
                 raise InstaPyError("The 'nogui' parameter isn't supported on Windows.")
