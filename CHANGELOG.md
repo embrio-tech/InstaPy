@@ -3,6 +3,44 @@
 The **goal** of this file is explaining to the users of our project the notable changes _relevant to them_ that occurred _between_ commits.
 
 _The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)_.
+## [0.6.4] - 2019-09-15
+
+### Fixed
+
+- prettyfied code
+- fixed onetap account page on login
+- fix minor bug in unfollow function
+
+
+## [0.6.3] - 2019-09-08
+
+### Added
+
+- Improved documentation
+- Added "no_comments" for Pods
+- Improve Tox / Travis testing
+- Improved random sleep delay
+- Telegram support
+
+### Fixed
+
+- Able to use Domains as a Proxy
+- jsonschema requrements version
+- skip_top_posts function
+- Backup plan for graphql additional / shared data
+
+
+## [0.6.2] - 2019-08-30
+
+### Added
+
+- New bypass challenge approach (choose sms or email option)
+- Show InstaPy version on initialization
+
+### Fixed
+
+- Login xpath update
+
 
 ## [0.6.1] - 2019-08-12
 
