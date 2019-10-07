@@ -4,18 +4,16 @@
 xpath = {}
 
 xpath["bypass_suspicious_login"] = {
-    "bypass_with_mobile_choice": "(//button)[2]",
-    "bypass_with_mobile_button": "//label[@for='choice_0']",
-    "choice": "//label[@for='choice_1']",
-    "choice_no_such_element": "//label[@class='_q0nt5']",
-    "choice_exception": "//label[@class='_q0nt5 _a7z3k']",
-    "choice_exception2": "//label",
-    "close_button": "[text()='Close']",
-    "security_code_field": "//input[@id='security_code']",
+    "bypass_with_sms_option": "//label[contains(text(),'Phone:')]",
+    "bypass_with_email_option": "//label[contains(text(),'Email:')]",
     "send_security_code_button": "//button[text()='Send Security Code']",
+    "security_code_field": "//input[@id='security_code']",
     "submit_security_code_button": "//button[text()='Submit']",
-    "this_was_me_button": "//button[@name='choice'][text()='This Was Me']",
     "wrong_login": "//p[text()='Please check the code we sent you and try again.']",
+}
+
+xpath["dismiss_this_was_me"] = {
+    "this_was_me_button": "//button[@name='choice'][text()='This Was Me']"
 }
 
 xpath["class_selectors"] = {
@@ -45,8 +43,8 @@ xpath["extract_information"] = {
 
 xpath["extract_post_info"] = {
     "comment_list": "//div/ul",
-    "comments": "li",
-    "load_more_comments_element": "//div/ul/li[2]/button",
+    "comments": "//li[@role='menuitem']",
+    "load_more_comments_element": "//div/ul/li/div/button",
     "load_more_comments_element_alt": "//div/ul/li[1]/button",
 }
 
@@ -80,7 +78,7 @@ xpath["get_comments_on_post"] = {
 xpath["get_cord_location"] = {"json_text": "//body"}
 
 xpath["get_following_status"] = {
-    "follow_button_XP": "(//button)[2][text()='Following' or \
+    "follow_button_XP": "//button[text()='Following' or \
                                   text()='Requested' or \
                                   text()='Follow' or \
                                   text()='Follow Back' or \
@@ -117,13 +115,13 @@ xpath["get_links_for_tag"] = {
 }
 
 xpath["get_number_of_posts"] = {
-    "num_of_posts_txt": "//section/main/div/header/section/ul/li[1]/span/span",
+    "num_of_posts_txt": "//section/main/div/ul/li[1]/span/span",
     "num_of_posts_txt_no_such_element": "//section/div[3]/div/header/section/ul/li[1]/span/span",
 }
 
 xpath["get_relationship_counts"] = {
-    "following_count": "//a[contains(@href,'following')]/span",
-    "followers_count": "//a[contains(@href,'followers')]/span",
+    "following_count": "//a[contains(@href,'following') and not(contains(@href,'mutual'))]/span",
+    "followers_count": "//a[contains(@href,'followers') and not(contains(@href,'mutual'))]/span",
     "topCount_elements": "//span[contains(@class,'g47SY')]",
 }
 

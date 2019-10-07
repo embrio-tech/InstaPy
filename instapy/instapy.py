@@ -24,6 +24,7 @@ except ModuleNotFoundError:
     pass
 
 # import InstaPy modules
+from . import __version__
 from .clarifai_util import check_image
 from .comment_util import comment_image
 from .comment_util import verify_commenting
@@ -118,8 +119,9 @@ class InstaPy:
         log_handler=None,  # TODO function type ?
         geckodriver_path: str = None,
         split_db: bool = False,
+        bypass_security_challenge_using: str = "email",
     ):
-
+        print("InstaPy Version: {}".format(__version__))
         cli_args = parse_cli_args()
         username = cli_args.username or username
         password = cli_args.password or password
@@ -147,6 +149,7 @@ class InstaPy:
         self.browser = None
         self.page_delay = page_delay
         self.disable_image_load = disable_image_load
+        self.bypass_security_challenge_using = bypass_security_challenge_using
 
         # choose environment over static typed credentials
         self.username = os.environ.get("INSTA_USER") or username
@@ -284,7 +287,7 @@ class InstaPy:
             "sports",
             "entertainment",
         ]
-        self.allowed_pod_engagement_modes = ["light", "normal", "heavy"]
+        self.allowed_pod_engagement_modes = ["no_comments", "light", "normal", "heavy"]
 
         # stores the features' name which are being used by other features
         self.internal_usage = {}
@@ -406,6 +409,7 @@ class InstaPy:
             self.logger,
             self.logfolder,
             self.proxy_address,
+            self.bypass_security_challenge_using,
         ):
             message = (
                 "Unable to login to Instagram! "
@@ -423,8 +427,10 @@ class InstaPy:
         # try to save account progress
         try:
             save_account_progress(self.browser, self.username, self.logger)
-        except Exception:
-            self.logger.warning("Unable to save account progress, skipping data update")
+        except Exception as e:
+            self.logger.warning(
+                "Unable to save account progress, skipping data update " + str(e)
+            )
 
         # logs only followers/following numbers when able to login,
         # to speed up the login process and avoid loading profile
@@ -700,7 +706,12 @@ class InstaPy:
                         self.smart_hashtags.append(item["tag"])
 
                 elif sort == "random":
-                    random_tags = random.sample(data["results"], limit)
+                    if len(data["results"]) < limit:
+                        random_tags = random.sample(
+                            data["results"], len(data["results"])
+                        )
+                    else:
+                        random_tags = random.sample(data["results"], limit)
                     for item in random_tags:
                         self.smart_hashtags.append(item["tag"])
 
@@ -1307,8 +1318,8 @@ class InstaPy:
             self.skip_non_business,
             self.skip_business_percentage,
             self.skip_business_categories,
-            self.skip_bio_keyword,
             self.dont_skip_business_categories,
+            self.skip_bio_keyword,
             self.logger,
             self.logfolder,
         )
@@ -3030,6 +3041,15 @@ class InstaPy:
     def interact_user_followers(
         self, usernames: list, amount: int = 10, randomize: bool = False
     ):
+        """
+        Interact with the people that a given user is followed by.
+
+        set_do_comment, set_do_follow and set_do_like are applicable.
+
+        :param usernames: List of users to interact with their followers.
+        :param amount: Amount of followers to interact with.
+        :param randomize: If followers should be chosen randomly.
+        """
 
         if self.aborting:
             return self
@@ -3120,7 +3140,7 @@ class InstaPy:
                 )
 
                 validation, details = self.validate_user_call(person)
-                if validation is not True:
+                if not validation:
                     self.logger.info(details)
                     not_valid_users += 1
 
@@ -3141,7 +3161,7 @@ class InstaPy:
                             self.logger,
                             self.logfolder,
                         )
-                        if unfollow_state is True:
+                        if unfollow_state:
                             simulated_unfollow += 1
 
                     continue
@@ -3149,7 +3169,7 @@ class InstaPy:
                 # Do interactions if any
                 do_interact = random.randint(0, 100) <= self.user_interact_percentage
 
-                if do_interact is False:
+                if not do_interact:
                     self.logger.info(
                         "Skipping user '{}' due to the interaction "
                         "percentage of {}".format(person, self.user_interact_percentage)
@@ -5737,12 +5757,16 @@ class InstaPy:
             else:
                 pod_posts = random.sample(pod_posts, nposts)
 
-            light_posts, normal_posts, heavy_posts = group_posts(pod_posts, self.logger)
+            no_comments_posts, light_posts, normal_posts, heavy_posts = group_posts(
+                pod_posts, self.logger
+            )
 
+            self.logger.error("no_comments_posts : {} ".format(no_comments_posts))
             self.logger.error("light_posts : {} ".format(light_posts))
             self.logger.error("normal_posts : {} ".format(normal_posts))
             self.logger.error("heavy_posts : {} ".format(heavy_posts))
 
+            self.engage_with_posts(no_comments_posts, 0)
             self.engage_with_posts(light_posts, 10)
             self.engage_with_posts(normal_posts, 30)
             self.engage_with_posts(heavy_posts, 90)
